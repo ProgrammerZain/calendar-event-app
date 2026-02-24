@@ -11,7 +11,7 @@ class TimelineView extends StatelessWidget {
 
   Map<String, List<dynamic>> _groupEventsByDate(List<dynamic> events) {
     final Map<String, List<dynamic>> grouped = {};
-    
+
     for (var event in events) {
       final dateKey = DateFormat('yyyy-MM-dd').format(event.date);
       if (!grouped.containsKey(dateKey)) {
@@ -19,7 +19,7 @@ class TimelineView extends StatelessWidget {
       }
       grouped[dateKey]!.add(event);
     }
-    
+
     return grouped;
   }
 
@@ -59,7 +59,7 @@ class TimelineView extends StatelessWidget {
 
     final groupedEvents = _groupEventsByDate(allEvents);
     final sortedDates = groupedEvents.keys.toList()
-      ..sort((a, b) => b.compareTo(a)); // Descending order (newest first)
+      ..sort((a, b) => b.compareTo(a));
 
     return ListView.builder(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -68,16 +68,18 @@ class TimelineView extends StatelessWidget {
         final dateKey = sortedDates[index];
         final date = DateTime.parse(dateKey);
         final events = groupedEvents[dateKey]!;
-        
+
         return _buildDateSection(context, date, events);
       },
     );
   }
 
-  Widget _buildDateSection(BuildContext context, DateTime date, List<dynamic> events) {
+  Widget _buildDateSection(
+      BuildContext context, DateTime date, List<dynamic> events) {
     final isToday = _isToday(date);
     final isTomorrow = _isTomorrow(date);
-    final isPast = date.isBefore(DateTime.now().subtract(const Duration(days: 1)));
+    final isPast =
+        date.isBefore(DateTime.now().subtract(const Duration(days: 1)));
 
     String dateLabel;
     if (isToday) {
@@ -85,23 +87,23 @@ class TimelineView extends StatelessWidget {
     } else if (isTomorrow) {
       dateLabel = 'Tomorrow';
     } else {
-      dateLabel = DateFormat('EEEE, MMMM dd, yyyy').format(date);
+      dateLabel = DateFormat('EEE, MMM dd, yyyy').format(date); // ← Shorter format
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Date Header with Timeline Circle
+        // Date Header
         Row(
           children: [
             Container(
               width: 12,
               height: 12,
               decoration: BoxDecoration(
-                color: isPast 
-                    ? AppColors.textDisabled 
-                    : isToday 
-                        ? AppColors.primary 
+                color: isPast
+                    ? AppColors.textDisabled
+                    : isToday
+                        ? AppColors.primary
                         : AppColors.secondary,
                 shape: BoxShape.circle,
                 border: Border.all(
@@ -118,7 +120,7 @@ class TimelineView extends StatelessWidget {
                   vertical: AppSpacing.sm,
                 ),
                 decoration: BoxDecoration(
-                  color: isToday 
+                  color: isToday
                       ? AppColors.primary.withOpacity(0.1)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(AppRadius.md),
@@ -126,12 +128,18 @@ class TimelineView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      dateLabel,
-                      style: AppTextStyles.h4.copyWith(
-                        color: isToday ? AppColors.primary : AppColors.textPrimary,
+                    Flexible(
+                      child: Text(
+                        dateLabel,
+                        style: AppTextStyles.h4.copyWith(
+                          color: isToday
+                              ? AppColors.primary
+                              : AppColors.textPrimary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
+                    const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
@@ -141,10 +149,11 @@ class TimelineView extends StatelessWidget {
                         color: isPast
                             ? AppColors.textDisabled.withOpacity(0.2)
                             : AppColors.primary.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(AppRadius.full),
+                        borderRadius:
+                            BorderRadius.circular(AppRadius.full),
                       ),
                       child: Text(
-                        '${events.length} event${events.length > 1 ? 's' : ''}',
+                        '${events.length}',
                         style: AppTextStyles.bodySmall.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -157,7 +166,7 @@ class TimelineView extends StatelessWidget {
           ],
         ),
 
-        // Events for this date
+        // Events
         Padding(
           padding: const EdgeInsets.only(left: 20),
           child: Container(
@@ -198,15 +207,15 @@ class TimelineView extends StatelessWidget {
 
   bool _isToday(DateTime date) {
     final now = DateTime.now();
-    return date.year == now.year && 
-           date.month == now.month && 
-           date.day == now.day;
+    return date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day;
   }
 
   bool _isTomorrow(DateTime date) {
     final tomorrow = DateTime.now().add(const Duration(days: 1));
-    return date.year == tomorrow.year && 
-           date.month == tomorrow.month && 
-           date.day == tomorrow.day;
+    return date.year == tomorrow.year &&
+        date.month == tomorrow.month &&
+        date.day == tomorrow.day;
   }
 }

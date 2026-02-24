@@ -33,9 +33,12 @@ class WeekView extends StatelessWidget {
                 icon: const Icon(Icons.chevron_left),
                 onPressed: calendarProvider.goToPrevious,
               ),
-              Text(
-                '${DateFormat('MMM dd').format(weekDates.first)} - ${DateFormat('MMM dd, yyyy').format(weekDates.last)}',
-                style: AppTextStyles.h4,
+              Flexible(
+                child: Text(
+                  '${DateFormat('MMM dd').format(weekDates.first)} - ${DateFormat('MMM dd, yyyy').format(weekDates.last)}',
+                  style: AppTextStyles.h4,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               IconButton(
                 icon: const Icon(Icons.chevron_right),
@@ -45,9 +48,9 @@ class WeekView extends StatelessWidget {
           ),
         ),
 
-        // Week Days Grid
+        // Week Days Strip
         SizedBox(
-          height: 80,
+          height: 100,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
@@ -63,6 +66,7 @@ class WeekView extends StatelessWidget {
                 child: Container(
                   width: 60,
                   margin: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? AppColors.primary
@@ -79,6 +83,7 @@ class WeekView extends StatelessWidget {
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         DateFormat('E').format(date),
@@ -86,35 +91,38 @@ class WeekView extends StatelessWidget {
                           color: isSelected
                               ? Colors.white
                               : AppColors.textSecondary,
+                          fontSize: 11,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
                         DateFormat('d').format(date),
                         style: AppTextStyles.h3.copyWith(
                           color: isSelected
                               ? Colors.white
                               : AppColors.textPrimary,
+                          fontSize: 20,
                         ),
                       ),
                       if (eventsCount > 0) ...[
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 2),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 6,
-                            vertical: 2,
+                            vertical: 1,
                           ),
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? Colors.white.withOpacity(0.3)
                                 : AppColors.secondary,
-                            borderRadius: BorderRadius.circular(AppRadius.full),
+                            borderRadius:
+                                BorderRadius.circular(AppRadius.full),
                           ),
                           child: Text(
                             '$eventsCount',
                             style: TextStyle(
-                              fontSize: 10,
-                              color: isSelected ? Colors.white : Colors.white,
+                              fontSize: 9,
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
